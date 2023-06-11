@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const dataUsers = require("../constants/users");
-
+const middleware = require("../middleware");
 // users/
 router.get("/", (req, res) => {
   res.status(200).json({
@@ -54,11 +54,9 @@ router.get("/grade/:grade?", (req, res) => {
 // Routing menggunakan Query Parameter
 // users/query
 router.get("/query", (req, res) => {
-  const users = dataUsers.filter((user) =>
-    user.name.toLowerCase().includes(req.query.name.toLowerCase())
-  );
+  const users = dataUsers.filter((user) => user.name.toLowerCase().includes(req.query.name.toLowerCase()));
 
-  if (users) {
+  if (users.length !== 0) {
     return res.status(200).json({
       status: "success",
       message: "Data user found",
@@ -75,7 +73,7 @@ router.get("/query", (req, res) => {
 
 // Routing menggunkan POST untuk menambahkan data baru
 // users/create
-router.post("/create", (req, res) => {
+router.post("/create", middleware.isAdministrator, (req, res) => {
   res.status(200).json({
     status: "success",
     message: "Data created",
