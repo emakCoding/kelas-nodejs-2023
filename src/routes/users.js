@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const dataUsers = require("../constants/users");
-const middleware = require("../middleware");
+
 // users/
 router.get("/", (req, res) => {
   res.status(200).json({
@@ -73,107 +73,11 @@ router.get("/query", (req, res) => {
 
 // Routing menggunkan POST untuk menambahkan data baru
 // users/create
-router.post("/create", middleware.isAdministrator, (req, res) => {
-  const user = dataUsers.find((data) => data.name == req.body.name);
-
-  if (user) {
-    return res.status(200).json({
-      status: "error",
-      message: "Name already exists",
-      data: [],
-    });
-  }
-
-  const dataBaru = {
-    id: dataUsers.length + 1,
-    name: req.body.name,
-    grade: req.body.grade,
-  };
-
-  dataUsers.push(dataBaru);
-
-  return res.status(201).json({
+router.post("/create", (req, res) => {
+  res.status(200).json({
     status: "success",
     message: "Data created",
-    data: dataBaru,
-  });
-});
-
-// Routing Menggunakan PATCH untuk mengubah data
-// users/update/:userId
-router.patch("/update/:userId", (req, res) => {
-  const index = dataUsers.findIndex((user) => user.id == req.params.userId);
-
-  if (index > -1) {
-    const user = dataUsers.find((data) => data.name == req.body.name);
-
-    if (user) {
-      return res.status(200).json({
-        status: "error",
-        message: "Name already exists",
-        data: [],
-      });
-    }
-
-    dataUsers[index].name = req.body.name;
-    dataUsers[index].grade = req.body.grade;
-
-    return res.status(200).json({
-      status: "success",
-      message: "Data updated",
-      data: dataUsers[index],
-    });
-  }
-
-  return res.status(404).json({
-    status: "error",
-    message: "Data not found",
-    data: [],
-  });
-});
-
-// Routing menggunakan DELETE untuk menghapus data
-// users/delete/:userId
-router.delete("/delete/:userId", (req, res) => {
-  const index = dataUsers.findIndex((user) => user.id == req.params.userId);
-
-  if (index > -1) {
-    dataUsers.splice(index, 1);
-
-    return res.status(200).json({
-      status: "success",
-      message: "Data deleted",
-      data: dataUsers,
-    });
-  }
-
-  return res.status(404).json({
-    status: "error",
-    message: "User not found",
-    data: [],
-  });
-});
-
-router.delete("/delete-by-name/:username", (req, res) => {
-  const index = dataUsers.findIndex((user) => user.name.toLowerCase() == req.params.username.toLowerCase());
-  // const index = dataUsers.findIndex((user) =>
-  //   user.name.toLowerCase().includes(req.params.username.toLowerCase())
-  // );
-
-  if (index > -1) {
-    dataUsers.splice(index, 1);
-
-    return res.status(200).json({
-      status: "success",
-      message: "Data deleted",
-      data: dataUsers,
-    });
-  }
-
-  return res.status(404).json({
-    status: "error",
-    message: "User not found",
-    data: [],
+    data: req.body,
   });
 });
 
