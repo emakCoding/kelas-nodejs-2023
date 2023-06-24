@@ -1,5 +1,3 @@
-const { request } = require("express");
-
 function logger(req, res, next) {
   console.log(req.method, req.url);
   console.log(req.headers);
